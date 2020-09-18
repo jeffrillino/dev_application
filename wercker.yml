@@ -34,3 +34,26 @@ build:
         code: |
           echo "node version $(node -v) running"
           echo "npm version $(npm -v) running"
+          
+push-docker-reg:
+  steps:
+    # Push to public docker repo  
+    - internal/docker-push:
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        tag: $DOCKER_TAG
+        repository: $DOCKER_REPOSITORY
+        registry: https://index.docker.io/v2/
+        # cmd: npm run dev
+        cmd: node pipeline/source/index.js
+        
+push-ocir:
+  steps:
+    - internal/docker-push:
+      username: $OCI_USERNAME
+      password: $OCI_PASSWORD
+      tag: $OCI_TAG
+      # repository: $OCI_USERNAME/$OCI_REPOSITORY
+      repository: $OCI_REPOSITORY
+      registry: https://$OCI_REGION.ocir.io/v2/
+      cmd: node pipeline/source/index.js
